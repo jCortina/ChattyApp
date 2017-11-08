@@ -12,13 +12,13 @@ class ChatBar extends Component {
     this.onMsgChg = this.onMsgChg.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.keyPress = this.keyPress.bind(this);
-    this.state = {usrName: this.props.currentUser.name, usrMsg: ''};
+    this.state = {usrName: this.props.currentUser, usrMsg: ''};
+    this.state.wrkUser = this.state.usrName;
     
   }
   // Action to take on User name change
   onUsrChg(ev)  {
-    this.setState({usrName: ev.target.value,}, () => {
-    });
+    this.state.wrkUser = ev.target.value;
   }
   // Action taken when message entered in chat box
   onMsgChg(ev)  {
@@ -28,27 +28,33 @@ class ChatBar extends Component {
   keyPress(ev)  {
     //enter key pressed - perform form submit process
     if (ev.key == 'Enter') {
-      //
-      this.onFormSubmit();
-      ev.target.value = '';
+      // if enter pressed, check user name against state, invoke callbach func if chg 
+      if (this.state.usrName !== this.state.wrkUser) {
+        this.props.onUsrChg(this.state.wrkUser);
+        this.setState({usrName: this.state.wrkUser});
+        //return;
+      }
+      // whenever enter key is pressed(on user or message) send msg only if not null
+      if (ev.target.name == 'msg' && ev.target.value !== null) {
+        this.onFormSubmit(this.state.wrkUser, this.state.usrMsg);
+        ev.target.value = '';
+      }
     }
-    //clear the message field
   }
-  onFormSubmit()  {
-    console.log("on form submit:", this.state.usrMsg);
-    this.props.onMsgSubmit(this.state.usrName, this.state.usrMsg); 
+  onFormSubmit(user, message)  {
+    this.props.onMsgSubmit(user, message); 
   }
   //............................................................................
   render() {
     return (
       <footer className="chatbar">
-        <form onSubmit={this.onFormSubmit}>
-          <input className="chatbar-username" type="txt" placeholder="Your Name           (Optional)" value={this.state.usrName} onChange={this.onUsrChg} />
-          <input className="chatbar-message" type="text" onKeyPress={this.keyPress} 
-            onChange={this.onMsgChg} placeholder="Type a message and hit ENTER" />
-        </form>
+        <input className="chatbar-username"  name='usr' defaultValue={this.state.usrName} 
+          onChange={this.onUsrChg} onKeyPress={this.keyPress} />
+        <input className="chatbar-message"  onKeyPress={this.keyPress} name='msg' 
+          onChange={this.onMsgChg} placeholder="Type a message and hit ENTER" />
       </footer>
     );
   }
 }
+
 export default ChatBar;

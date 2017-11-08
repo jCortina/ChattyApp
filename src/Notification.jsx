@@ -5,7 +5,7 @@ import React, {Component} from 'react';
 /*eslint-enable no-unused-vars*/
 
 
-class Message extends Component {
+class Notification extends Component {
   
   constructor(props) {
     super(props);
@@ -16,12 +16,12 @@ class Message extends Component {
   //else 
   
   render() {
+    console.log("render notification: " + this.props.message.content);
     return(
-      <div className="message" >
-        <span className="message-username">{this.props.message.usrName}</span>
-        <span className="message-content">{this.props.message.usrMsg}</span>
+      <div className="notification" >
+        <span className="msg-notification">{this.props.message.content}</span>
       </div>
      );
   }
 }
-export default Message;
+export default Notification;
